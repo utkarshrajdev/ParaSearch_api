@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
+
 class CustomUserManager(BaseUserManager):
     """
     Custom user manager for the CustomUser model.
@@ -37,13 +38,15 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+
 class CustomUser(AbstractBaseUser):
     """
     Custom user model extending AbstractBaseUser.
     """
 
     id = models.AutoField(primary_key=True)
-    email = models.EmailField(verbose_name="email", max_length=255, unique=True)
+    email = models.EmailField(verbose_name="email",
+                              max_length=255, unique=True)
     name = models.CharField(max_length=255)
     dob = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -71,6 +74,7 @@ class CustomUser(AbstractBaseUser):
         """
         return True
 
+
 class Paragraph(models.Model):
     """
     Model representing a paragraph of text.
@@ -81,6 +85,7 @@ class Paragraph(models.Model):
 
     objects = models.Manager()
 
+
 class Word(models.Model):
     """
     Model representing a word in a paragraph.
@@ -88,6 +93,7 @@ class Word(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     word = models.CharField(max_length=255)
-    paragraph = models.ForeignKey(Paragraph, related_name='words', on_delete=models.CASCADE)
+    paragraph = models.ForeignKey(
+        Paragraph, related_name='words', on_delete=models.CASCADE)
 
     objects = models.Manager()

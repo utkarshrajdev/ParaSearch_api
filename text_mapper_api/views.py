@@ -19,10 +19,12 @@ class SignUpView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
 
+
 class LoginView(APIView):
     """
     View for user login.
     """
+
     def post(self, request):
         """
         Authenticate user and generate tokens.
@@ -38,6 +40,7 @@ class LoginView(APIView):
                 'access': str(refresh.access_token),
             })
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 class ParagraphCreateView(APIView):
     """
@@ -58,6 +61,7 @@ class ParagraphCreateView(APIView):
                 Word.objects.create(word=word, paragraph=paragraph)
         return Response({'message': 'Paragraphs and words created successfully'}, status=status.HTTP_201_CREATED)
 
+
 class SearchView(APIView):
     """
     View for searching paragraphs by word.
@@ -73,6 +77,7 @@ class SearchView(APIView):
         if not word:
             return Response({'error': 'Word parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-        matching_paragraphs = Paragraph.objects.filter(words__word=word).distinct()
+        matching_paragraphs = Paragraph.objects.filter(
+            words__word=word).distinct()
         serializer = ParagraphSerializer(matching_paragraphs, many=True)
         return Response(serializer.data)
