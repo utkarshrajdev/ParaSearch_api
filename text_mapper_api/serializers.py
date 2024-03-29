@@ -1,10 +1,12 @@
-# serializers.py
-from rest_framework import serializers, generics
-from .models import CustomUser, Paragraph, Word
+from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
-
+from .models import CustomUser, Paragraph
 
 class CustomUserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the CustomUser model.
+    """
+
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -13,6 +15,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
+        """
+        Create a new user instance.
+        """
         password = validated_data.pop('password', None)
         user = CustomUser.objects.create(**validated_data)
         if password:
@@ -21,12 +26,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return user
 
 class ParagraphSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Paragraph model.
+    """
+
     class Meta:
         model = Paragraph
         fields = ['id', 'text']
-
-class WordSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Word
-        fields = ['id', 'word']
-

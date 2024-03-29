@@ -3,7 +3,14 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 class CustomUserManager(BaseUserManager):
+    """
+    Custom user manager for the CustomUser model.
+    """
+
     def create_user(self, email, name, password=None):
+        """
+        Create and save a regular user with the given email, name, and password.
+        """
         if not email:
             raise ValueError('Users must have an email address')
         if not name:
@@ -18,6 +25,9 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, name, password):
+        """
+        Create and save a superuser with the given email, name, and password.
+        """
         user = self.create_user(
             email=email,
             name=name,
@@ -28,6 +38,10 @@ class CustomUserManager(BaseUserManager):
         return user
 
 class CustomUser(AbstractBaseUser):
+    """
+    Custom user model extending AbstractBaseUser.
+    """
+
     id = models.AutoField(primary_key=True)
     email = models.EmailField(verbose_name="email", max_length=255, unique=True)
     name = models.CharField(max_length=255)
@@ -43,21 +57,37 @@ class CustomUser(AbstractBaseUser):
     REQUIRED_FIELDS = ['name']
 
     def __str__(self):
-        return self.email
+        return str(self.email)
 
     def has_perm(self, perm, obj=None):
+        """
+        Check if the user has a specific permission.
+        """
         return self.is_admin
 
     def has_module_perms(self, app_label):
+        """
+        Check if the user has permissions to access the app `app_label`.
+        """
         return True
 
-
-# models.py
 class Paragraph(models.Model):
+    """
+    Model representing a paragraph of text.
+    """
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     text = models.TextField()
 
+    objects = models.Manager()
+
 class Word(models.Model):
+    """
+    Model representing a word in a paragraph.
+    """
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     word = models.CharField(max_length=255)
     paragraph = models.ForeignKey(Paragraph, related_name='words', on_delete=models.CASCADE)
+
+    objects = models.Manager()
